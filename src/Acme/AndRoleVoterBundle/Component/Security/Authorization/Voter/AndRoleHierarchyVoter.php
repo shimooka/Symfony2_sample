@@ -18,7 +18,6 @@ class AndRoleHierarchyVoter extends RoleHierarchyVoter
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-var_dump(__CLASS__);
         $satisfied_roles = true;
         $roles = $this->extractRoles($token);
         foreach ($attributes as $attribute) {
