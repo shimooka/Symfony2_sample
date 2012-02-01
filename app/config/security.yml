@@ -11,6 +11,10 @@ security:
             users:
                 user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                 admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+                role_a:  { password: pass, roles: [ 'ROLE_A' ] }
+                role_both: { password: pass, roles: [ 'ROLE_A', 'ROLE_B' ] }
+#        customers:
+#            entity: { class: Acme\AndRoleVoterBundle\Entity\Customer, property: username }
 
     firewalls:
         dev:
@@ -33,6 +37,22 @@ security:
             #http_basic:
             #    realm: "Secured Demo Area"
 
+        AndRoleVoterBundle_login:
+            pattern:  ^/AndRoleVoterBundle/login$
+            security: false
+
+        AndRoleVoterBundle_secured_area:
+            pattern:    ^/AndRoleVoterBundle/
+            form_login:
+                check_path: /AndRoleVoterBundle/login_check
+                login_path: /AndRoleVoterBundle/login
+                default_target_path: /AndRoleVoterBundle/hello/success
+            logout:
+                path:   /AndRoleVoterBundle/logout
+                target: /AndRoleVoterBundle/login
+
     access_control:
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         #- { path: ^/_internal, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
+        - { path: ^/AndRoleVoterBundle/user/, roles: [ROLE_A]}
+        - { path: ^/AndRoleVoterBundle/private/, roles: [ROLE_A, ROLE_B]}

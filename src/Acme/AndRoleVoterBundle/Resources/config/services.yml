@@ -1,0 +1,8 @@
+parameters:
+#    sandbox_test.example.class: Sandbox\TestBundle\Example
+    security.access.role_hierarchy_voter.class: Acme\AndRoleVoterBundle\Component\Security\Authorization\Voter\AndRoleHierarchyVoter
+
+services:
+#    sandbox_test.example:
+#        class: %sandbox_test.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,0 +1,7 @@
+Hello {{ name }} in hello
+<ul>
+<li><a href="{{ path('hello', {'name': name}) }}">hello</a></li>
+<li><a href="{{ path('user', {'name': name}) }}">user</a></li>
+<li><a href="{{ path('private', {'name': name}) }}">private</a></li>
+<li><a href="{{ path('logout') }}">logout</a></li>
+<ul>
