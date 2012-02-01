@@ -4,3 +4,6 @@
 /app/logs/*
 /vendor/
 /app/config/parameters.ini
+*.BAK
+*~
+*_
