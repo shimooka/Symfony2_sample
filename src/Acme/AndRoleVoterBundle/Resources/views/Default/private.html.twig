@@ -1,3 +1,5 @@
+{% extends '::base.html.twig' %}
+{% block body %}
 Hello {{ name }} in private
 <ul>
 <li><a href="{{ path('hello', {'name': name}) }}">hello</a></li>
@@ -5,3 +7,4 @@ Hello {{ name }} in private
 <li><a href="{{ path('private', {'name': name}) }}">private</a></li>
 <li><a href="{{ path('logout') }}">logout</a></li>
 <ul>
+{% endblock %}
