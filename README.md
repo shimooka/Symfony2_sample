@@ -7,8 +7,6 @@ Symfony2を使ったサンプルです。
 ------------
 
     mkdir -p app/cache app/logs
-    perl -i -p -s -e "s/(127.0.0.1)/\1', '192.168.32.1/g" web/app_dev.php
-    perl -i -p -s -e "s/(127.0.0.1)/\1', '192.168.32.1/g" web/config.php
     sudo setfacl -R -m u:nobody:rwx -m u:mobylog:rwx app/cache app/logs
     sudo setfacl -dR -m u:nobody:rwx -m u:mobylog:rwx app/cache app/logs
     cp -p app/config/parameters.ini-dist app/config/parameters.ini
