@@ -1,0 +1,6 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+{% for service in services %}
+<li>{{ service }}</li>
+{% endfor %}
+{% endblock %}

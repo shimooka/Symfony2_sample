@@ -1,3 +1,8 @@
+AcmeTransportBundle:
+    resource: "@AcmeTransportBundle/Controller/"
+    type:     annotation
+    prefix:   /TransportBundle
+
 AcmeAndRoleVoterBundle:
     resource: "@AcmeAndRoleVoterBundle/Controller/"
     type:     annotation

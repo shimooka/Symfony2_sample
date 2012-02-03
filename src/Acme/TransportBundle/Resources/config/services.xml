@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="transport_chain.class">Acme\TransportBundle\TransportChain</parameter>
+    </parameters>
+
+    <services>
+        <service id="transport_chain" class="%transport_chain.class%" />
+        <service id="transport.smtp" class="Swift_NullTransport">
+            <tag name="transport" />
+        </service>
+
+        <service id="swift_events_eventdispatcher" class="Swift_Events_SimpleEventDispatcher" />
+        <service id="transport.sendmail" class="Swift_Transport_NullTransport">
+            <argument type="service" id="swift_events_eventdispatcher" />
+            <tag name="transport" />
+        </service>
+    </services>
+
+</container>
