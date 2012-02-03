@@ -17,5 +17,6 @@ Bundle
 
 ### Acme/AndRoleVoterBundle
    - [Symfony2で権限の組み合わせを満たす場合のみアクセスを許可したい - Do You PHP はてな](http://d.hatena.ne.jp/shimooka/20120201/1328093870)を参照
+
 ###  Acme/TransportBundle
    - [Symfony2 service container: how to make your service use tags](http://php-and-symfony.matthiasnoback.nl/2011/10/symfony2-service-container-how-to-make-your-service-use-tags/)を元にしたサンプル
