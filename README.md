@@ -25,5 +25,5 @@ Bundle
 ###  Acme/ResponseListenerBundle
    - [Symfony2: create a response filter and set extra response headers | PHP & Symfony](http://php-and-symfony.matthiasnoback.nl/2011/10/symfony2-create-a-response-filter-and-set-extra-response-headers/)を元にしたサンプル
    - _formatがcsvの場合にContent-Type、Content-Dispositionの各ヘッダを設定するEventListenerを追加する例
-   - "/"にアクセスした場合、所定のActionにforwardする
+   - "/[prefix]/"にアクセスした場合、所定のActionにforwardする
    - Routeアノテーションの記述例
