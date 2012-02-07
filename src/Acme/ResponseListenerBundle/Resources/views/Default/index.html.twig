@@ -1,0 +1,12 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+Hello {{ name }}!
+
+<ul>
+<li><a href="{{ path('ResponseListenerBundle_hello', {'name': 'ResponseListenerBundle'}) }}">none</a></li>
+<li><a href="{{ path('ResponseListenerBundle_hello', {'name': 'ResponseListenerBundle', '_format': 'html'}) }}">html</a></li>
+<li><a href="{{ path('ResponseListenerBundle_hello', {'name': 'ResponseListenerBundle', '_format': 'json'}) }}">json</a></li>
+<li><a href="{{ path('ResponseListenerBundle_hello', {'name': 'ResponseListenerBundle', '_format': 'xml'}) }}">xml</a></li>
+<li><a href="{{ path('ResponseListenerBundle_hello', {'name': 'ResponseListenerBundle', '_format': 'csv'}) }}">csv</a></li>
+</ul>
+{% endblock %}

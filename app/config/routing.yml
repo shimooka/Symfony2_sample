@@ -1,3 +1,8 @@
+AcmeResponseListenerBundle:
+    resource: "@AcmeResponseListenerBundle/Controller/"
+    type:     annotation
+    prefix:   /ResponseListenerBundle
+
 AcmeTransportBundle:
     resource: "@AcmeTransportBundle/Controller/"
     type:     annotation
