@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <data><![CDATA[Hello ResponseListenerBundle!]]></data>
+</response>
