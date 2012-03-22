@@ -13,7 +13,7 @@ use Symfony\Component\Form\AbstractType;
  *     form.type.gender:
  *         class: Acme\FormTypeBundle\Form\Type\GenderType
  *         arguments:
- *             - @doctrine.orm.entity_manager
+ *             - "%genders%"
  *         tags:
  *             - { name: form.type, alias: gender }
  *
