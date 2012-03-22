@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Acme\AndRoleVoterBundle\AcmeAndRoleVoterBundle(),
             new Acme\TransportBundle\AcmeTransportBundle(),
             new Acme\ResponseListenerBundle\AcmeResponseListenerBundle(),
+            new Acme\FormTypeBundle\AcmeFormTypeBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

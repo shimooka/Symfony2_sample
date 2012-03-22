@@ -1,3 +1,8 @@
+AcmeFormTypeBundle:
+    resource: "@AcmeFormTypeBundle/Controller/"
+    type:     annotation
+    prefix:   /FormTypeBundle
+
 AcmeResponseListenerBundle:
     resource: "@AcmeResponseListenerBundle/Controller/"
     type:     annotation

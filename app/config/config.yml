@@ -36,17 +36,32 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   %database_driver%
-        host:     %database_host%
-        port:     %database_port%
-        dbname:   %database_name%
-        user:     %database_user%
-        password: %database_password%
-        charset:  UTF8
-
+        default_connection: %database_name%
+        connections:
+            %database_name%:
+                driver:   %database_driver%
+                host:     %database_host%
+                port:     %database_port%
+                dbname:   %database_name% options='--client_encoding=UTF8'
+                user:     %database_user%
+                password: %database_password%
+                charset:  UTF8
+            bizen:
+                driver:   pdo_pgsql
+                host:     localhost
+                port:     5432
+                dbname:   bizen_db options='--client_encoding=UTF8'
+                user:     bizen
+                password: bizen
+                charset:  UTF8
     orm:
         auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
+#        auto_mapping: true
+        entity_managers:
+            default:
+                connection: bizen
+                mappings: # Required
+                    AcmeFormTypeBundle: ~
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -58,3 +73,8 @@ swiftmailer:
 jms_security_extra:
     secure_controllers:  true
     secure_all_services: false
+
+parameters:
+    genders:
+        m: Male
+        f: Female

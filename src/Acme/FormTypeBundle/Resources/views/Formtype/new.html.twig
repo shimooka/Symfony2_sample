@@ -1,0 +1,20 @@
+{% extends "AcmeFormTypeBundle::layout.html.twig" %}
+{% form_theme form "AcmeFormTypeBundle:Form:form.html.twig" %}
+
+{% block header_title %}新規登録{% endblock header_title %}
+{% block contents %}
+<form action="{{ path('formType_create') }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit" class="btn-primary btn-large">Create</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('formType') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock contents %}

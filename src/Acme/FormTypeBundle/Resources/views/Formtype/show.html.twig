@@ -1,0 +1,64 @@
+{% extends "AcmeFormTypeBundle::layout.html.twig" %}
+
+{% block header_title %}詳細{% endblock header_title %}
+{% block contents %}
+<table class="record_properties">
+    <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ entity.id }}</td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ entity.title }}</td>
+        </tr>
+        <tr>
+            <th>Prefecture</th>
+            <td>{{ entity.prefecture }}</td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td>{{ entity.gender }}</td>
+        </tr>
+        <tr>
+            <th>Registerdate1</th>
+            <td>{{ entity.registerDate1|date('Y-m-d H:i:s') }}</td>
+        </tr>
+        <tr>
+            <th>Registerdate2</th>
+            <td>{{ entity.registerDate2 }}</td>
+        </tr>
+        <tr>
+            <th>Insertdate</th>
+            <td>{{ entity.insertDate|date('Y-m-d H:i:s') }}</td>
+        </tr>
+        <tr>
+            <th>Updatedate</th>
+            <td>{{ entity.updateDate|date('Y-m-d H:i:s') }}</td>
+        </tr>
+        <tr>
+            <th>Deleteflag</th>
+            <td>{{ entity.deleteFlag }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('formType') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('formType_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>
+        <form action="{{ path('formType_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit" class="btn-danger btn-large"><i class="icon-remove icon-white"></i> Delete</button>
+        </form>
+    </li>
+</ul>
+{% endblock contents %}

@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+  <parameters>
+    <parameter key="genders" type="collection">
+      <parameter key="m">男性</parameter>
+      <parameter key="f">女性</parameter>
+    </parameter>
+  </parameters>
+
+  <services>
+    <service id="acme_formtype.type.gender" class="Acme\FormTypeBundle\Form\Type\GenderType">
+      <argument>%genders%</argument>
+      <tag name="form.type" alias="gender" />
+    </service>
+    <service id="acme_formtype.type.pref" class="Acme\FormTypeBundle\Form\Type\PrefType">
+      <argument type="service" id="doctrine.orm.entity_manager"/>
+      <tag name="form.type" alias="pref" />
+    </service>
+  </services>
+
+</container>

@@ -1,0 +1,26 @@
+{% extends "AcmeFormTypeBundle::layout.html.twig" %}
+{% form_theme edit_form "AcmeFormTypeBundle:Form:form.html.twig" %}
+
+{% block header_title %}編集{% endblock header_title %}
+{% block contents %}
+<form action="{{ path('formType_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }} class="form-horizontal">
+    {{ form_widget(edit_form) }}
+    <p>
+        <button type="submit" class="btn-primary btn-large"><i class="icon-ok icon-white"></i> Edit</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('formType') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <form action="{{ path('formType_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit" class="btn-danger btn-large"><i class="icon-remove icon-white"></i> Delete</button>
+        </form>
+    </li>
+</ul>
+{% endblock contents %}
