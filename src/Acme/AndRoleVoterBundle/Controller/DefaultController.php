@@ -18,7 +18,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/user/{name}", name="user")
+     * @Route("/public/{name}", name="public")
      * @Template()
      */
     public function userAction($name)

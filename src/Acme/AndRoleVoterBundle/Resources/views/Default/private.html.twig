@@ -3,7 +3,7 @@
 Hello {{ name }} in private
 <ul>
 <li><a href="{{ path('hello', {'name': name}) }}">hello</a></li>
-<li><a href="{{ path('user', {'name': name}) }}">user</a></li>
+<li><a href="{{ path('public', {'name': name}) }}">public</a></li>
 <li><a href="{{ path('private', {'name': name}) }}">private</a></li>
 <li><a href="{{ path('logout') }}">logout</a></li>
 <ul>
