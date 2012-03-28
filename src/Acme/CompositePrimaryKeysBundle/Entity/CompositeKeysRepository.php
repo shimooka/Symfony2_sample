@@ -23,6 +23,17 @@ class CompositeKeysRepository extends EntityRepository
                . "WHERE 1 = 1 ";
         foreach ($data as $name => $value) {
             if ($value !== null) {
+                /**
+                 * @todo FIXME
+                 *
+                 * $query .= "AND a.{$name} ~ :{$name} ";
+                 * $binds[$name] = $value;
+                 *
+                 * or
+                 *
+                 * $query .= "AND a.{$name} LIKE '%' || :{$name} || '%' ";
+                 * $binds[$name] = $value;
+                 */
                 $query .= "AND a.{$name} LIKE :{$name} ";
                 $binds[$name] = "%{$value}%";
             }
