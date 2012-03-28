@@ -13,11 +13,24 @@ use Acme\CompositePrimaryKeysBundle\Form\CompositeKeysSearchType;
 /**
  * CompositeKeys controller.
  *
+ * app/config/config.yml
+ *   knp_paginator:
+ *       page_range: 5
+ *       default_options:
+ *           page_name: p
+ *           sort_field_name: s
+ *           sort_direction_name: d
+ *           distinct: true
+ *       template:
+ *           pagination: KnpPaginatorBundle:Pagination:sliding.html.twig
+ *           sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig
+ *
  * @Route("/compositeKeys")
  */
 class CompositeKeysController extends Controller
 {
     const MESSAGE_KEY = '_message';
+    const SEARCH_FORM_KEY = '_search_form';
 
     /**
      * Lists all CompositeKeys entities.
@@ -27,9 +40,14 @@ class CompositeKeysController extends Controller
      */
     public function indexAction()
     {
-        $form     = $this->createForm(new CompositeKeysSearchType());
-        $message = $this->getMessage();
+        $form       = $this->createForm(new CompositeKeysSearchType());
+        $message    = $this->getMessage();
         $pagination = null;
+
+        $this->getSession()->set(
+            CompositeKeysController::SEARCH_FORM_KEY,
+            $this->getRequest()->request->get($form->getName(), array()
+        ));
 
         return array(
             'form'   => $form->createView(),
@@ -46,26 +64,31 @@ class CompositeKeysController extends Controller
      */
     public function listAction()
     {
-        $form     = $this->createForm(new CompositeKeysSearchType());
-        $request  = $this->getRequest();
-        $message = $this->getMessage();
+        $form       = $this->createForm(new CompositeKeysSearchType());
+        $request    = $this->getRequest();
+        $message    = $this->getMessage();
         $pagination = null;
 
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
-            $request->getSession()->set('_search_form', $request->request->get($form->getName(), array()));
+            /**
+             * $request->request = $_POST
+             */
+            $this->getSession()->set(
+                CompositeKeysController::SEARCH_FORM_KEY,
+                $request->request->get($form->getName(), array()
+            ));
         } else {
-            $form->bind($request->getSession()->get('_search_form', array()));
+            $form->bind($this->getSession()->get(CompositeKeysController::SEARCH_FORM_KEY, array()));
         }
 
-        $repository = $this->getDoctrine()->getEntityManager()->getRepository('AcmeCompositePrimaryKeysBundle:CompositeKeys');
-        $query = $repository->findBySearchForm($form->getData());
+        $query = $this->getRepository()->findBySearchForm($form->getData());
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
             $query,
             $request->query->get('p', 1),   // $request->query = $_GET
-            2,                              // items per page
+            5,                              // items per page
             array('distinct' => false)      // 複合主キーの場合は必須
         );
 
@@ -84,15 +107,17 @@ class CompositeKeysController extends Controller
      */
     public function showAction($key1, $key2)
     {
-        $request  = $this->getRequest();
         $message = $this->getMessage();
 
-        $em = $this->getDoctrine()->getEntityManager();
-        $entity = $em->getRepository('AcmeCompositePrimaryKeysBundle:CompositeKeys')->find(array('key1' => $key1, 'key2' => $key2));
+        /**
+         * EntityRepository#findメソッドに配列で検索条件を渡す
+         */
+        $entity = $this->getRepository()
+            ->find(array('key1' => $key1, 'key2' => $key2));
 
         if (!$entity) {
             $this->setErrorMessage('データが存在しません');
-            return $this->redirect($this->generateUrl('compositeKeys'));
+            return $this->redirect($this->generateUrl('compositeKeys_list'));
         }
 
         $deleteForm = $this->createDeleteForm($key1, $key2);
@@ -130,20 +155,22 @@ class CompositeKeysController extends Controller
      */
     public function createAction()
     {
-        $request  = $this->getRequest();
         $message = $this->getMessage();
 
         $entity  = new CompositeKeys();
         $form    = $this->createForm(new CompositeKeysType(), $entity);
-        $form->bindRequest($request);
+        $form->bindRequest($this->getRequest());
 
         if ($form->isValid()) {
             try {
-                $em = $this->getDoctrine()->getEntityManager();
+                $em = $this->getEntityManager();
                 $em->persist($entity);
                 $em->flush();
                 $this->setNoticeMessage('データを登録しました');
-                return $this->redirect($this->generateUrl('compositeKeys_show', array('key1' => $entity->getKey1(), 'key2' => $entity->getKey2())));
+                return $this->redirect(
+                    $this->generateUrl(
+                        'compositeKeys_show',
+                        array('key1' => $entity->getKey1(), 'key2' => $entity->getKey2())));
             } catch (\PDOException $e) {
                 $message = array('error' => 'エラーが発生しました');
                 if ($e->getCode() === '23505') {    // \PDO::ERR_ALREADY_EXISTS
@@ -167,12 +194,15 @@ class CompositeKeysController extends Controller
      */
     public function editAction($key1, $key2)
     {
-        $em = $this->getDoctrine()->getEntityManager();
-        $entity = $em->getRepository('AcmeCompositePrimaryKeysBundle:CompositeKeys')->find(array('key1' => $key1, 'key2' => $key2));
+        /**
+         * EntityRepository#findメソッドに配列で検索条件を渡す
+         */
+        $entity = $this->getRepository()
+            ->find(array('key1' => $key1, 'key2' => $key2));
 
         if (!$entity) {
             $this->setErrorMessage('データが存在しません');
-            return $this->redirect($this->generateUrl('compositeKeys'));
+            return $this->redirect($this->generateUrl('compositeKeys_list'));
         }
 
         $editForm = $this->createForm(new CompositeKeysType(), $entity);
@@ -195,21 +225,24 @@ class CompositeKeysController extends Controller
      */
     public function updateAction($key1, $key2)
     {
-        $request  = $this->getRequest();
-        $em = $this->getDoctrine()->getEntityManager();
-        $entity = $em->getRepository('AcmeCompositePrimaryKeysBundle:CompositeKeys')->find(array('key1' => $key1, 'key2' => $key2));
+        /**
+         * EntityRepository#findメソッドに配列で検索条件を渡す
+         */
+        $entity = $this->getRepository()
+            ->find(array('key1' => $key1, 'key2' => $key2));
 
         if (!$entity) {
             $this->setErrorMessage('データが存在しません');
-            return $this->redirect($this->generateUrl('compositeKeys'));
+            return $this->redirect($this->generateUrl('compositeKeys_list'));
         }
 
         $editForm   = $this->createForm(new CompositeKeysType(), $entity);
         $deleteForm = $this->createDeleteForm($key1, $key2);
 
-        $editForm->bindRequest($request);
+        $editForm->bindRequest($this->getRequest());
 
         if ($editForm->isValid()) {
+            $em = $this->getEntityManager();
             $em->persist($entity);
             $em->flush();
 
@@ -234,41 +267,38 @@ class CompositeKeysController extends Controller
     public function deleteAction($key1, $key2)
     {
         $form = $this->createDeleteForm($key1, $key2);
-        $request = $this->getRequest();
-
-        $form->bindRequest($request);
+        $form->bindRequest($this->getRequest());
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
-            $entity = $em->getRepository('AcmeCompositePrimaryKeysBundle:CompositeKeys')->find(array('key1' => $key1, 'key2' => $key2));
+            $entity = $this->getRepository()
+                ->find(array('key1' => $key1, 'key2' => $key2));
 
             if (!$entity) {
                 $this->setErrorMessage('データが存在しません');
-                return $this->redirect($this->generateUrl('compositeKeys'));
+                return $this->redirect($this->generateUrl('compositeKeys_list'));
             }
 
+            $em = $this->getEntityManager();
             $em->remove($entity);
             $em->flush();
             $this->setNoticeMessage('データを削除しました');
         }
 
-        return $this->redirect($this->generateUrl('compositeKeys'));
+        return $this->redirect($this->generateUrl('compositeKeys_list'));
     }
 
     private function createDeleteForm($key1, $key2)
     {
         return $this->createFormBuilder(array('key1' => $key1, 'key2' => $key2))
-            ->add('id', 'hidden')
             ->getForm()
         ;
     }
 
     private function getMessage() {
-        $request  = $this->getRequest();
         $message = null;
-        if ($request->getSession()->has(CompositeKeysController::MESSAGE_KEY)) {
-            $message = $request->getSession()->get(CompositeKeysController::MESSAGE_KEY);
-            $request->getSession()->set(CompositeKeysController::MESSAGE_KEY, null);
+        if ($this->getSession()->has(CompositeKeysController::MESSAGE_KEY)) {
+            $message = $this->getSession()->get(CompositeKeysController::MESSAGE_KEY);
+            $this->getSession()->set(CompositeKeysController::MESSAGE_KEY, null);
         }
         return $message;
     }
@@ -281,5 +311,14 @@ class CompositeKeysController extends Controller
     }
     private function setMessage($type, $message) {
         $this->getRequest()->getSession()->set(CompositeKeysController::MESSAGE_KEY, array($type => $message));
+    }
+    private function getEntityManager() {
+        return $this->getDoctrine()->getEntityManager();
+    }
+    private function getRepository($name = 'AcmeCompositePrimaryKeysBundle:CompositeKeys') {
+        return $this->getEntityManager()->getRepository($name);
+    }
+    private function getSession() {
+        return $this->getRequest()->getSession();
     }
 }
