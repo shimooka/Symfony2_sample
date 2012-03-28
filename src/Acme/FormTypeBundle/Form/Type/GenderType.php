@@ -40,6 +40,9 @@ class GenderType extends AbstractType
         return 'acme_formtypebundle_gendertype';
     }
 
+    /**
+     * フォームでの表示形式を指定
+     */
     public function getParent(array $options)
     {
         return 'choice';
