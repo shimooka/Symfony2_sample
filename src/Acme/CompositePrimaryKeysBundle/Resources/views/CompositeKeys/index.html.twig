@@ -1,0 +1,65 @@
+<html>
+<body>
+{% if message.notice is defined %}
+    <div>{{ message.notice }}</div>
+{% endif %}
+{% if message.error is defined  %}
+    <div>{{ message.error }}</div>
+{% endif %}
+
+<form action="{{ path('compositeKeys_list') }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
+  <fieldset>
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit" class="btn-primary btn-large">Search</button>
+    </p>
+  </fieldset>
+</form>
+
+{% if pagination %}
+<div class="navigation">
+    {{ pagination.render()|raw }}
+</div>
+<table class="records_list">
+    <thead>
+        <tr>
+            <th>{{ pagination.sortable('Key1', 'a.key1')|raw }}</th>
+            <th>{{ pagination.sortable('Key2', 'a.key2')|raw }}</th>
+            <th>{{ pagination.sortable('Name', 'a.name')|raw }}</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for entity in pagination %}
+        <tr>
+            <td><a href="{{ path('compositeKeys_show', { 'key1': entity.key1, 'key2': entity.key2 }) }}">{{ entity.key1 }}</td>
+            <td>{{ entity.key2 }}</td>
+            <td>{{ entity.name }}</td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('compositeKeys_show', { 'key1': entity.key1, 'key2': entity.key2 }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('compositeKeys_edit', { 'key1': entity.key1, 'key2': entity.key2 }) }}">edit</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="navigation">
+    {{ pagination.render()|raw }}
+</div>
+{% endif %}
+
+<ul>
+    <li>
+        <a href="{{ path('compositeKeys_new') }}">
+            Create a new entry
+        </a>
+    </li>
+</ul>
+</body>
+</html>

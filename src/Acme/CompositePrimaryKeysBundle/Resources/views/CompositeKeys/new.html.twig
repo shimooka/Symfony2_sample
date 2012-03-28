@@ -1,0 +1,21 @@
+{% if message.notice is defined %}
+    <div>{{ message.notice }}</div>
+{% endif %}
+{% if message.error is defined  %}
+    <div>{{ message.error }}</div>
+{% endif %}
+
+<form action="{{ path('compositeKeys_create') }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit" class="btn-primary btn-large">Create</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('compositeKeys_list') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>

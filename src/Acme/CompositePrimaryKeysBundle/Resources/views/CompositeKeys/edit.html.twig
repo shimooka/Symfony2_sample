@@ -1,0 +1,27 @@
+{% if message.notice is defined %}
+    <div>{{ message.notice }}</div>
+{% endif %}
+{% if message.error is defined  %}
+    <div>{{ message.error }}</div>
+{% endif %}
+
+<form action="{{ path('compositeKeys_update', { 'key1': entity.key1, 'key2': entity.key2 }) }}" method="post" {{ form_enctype(edit_form) }} class="form-horizontal">
+    {{ form_widget(edit_form) }}
+    <p>
+        <button type="submit" class="btn-primary btn-large"><i class="icon-ok icon-white"></i> Edit</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('compositeKeys_list') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <form action="{{ path('compositeKeys_delete', { 'key1': entity.key1, 'key2': entity.key2 }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit" class="btn-danger btn-large"><i class="icon-remove icon-white"></i> Delete</button>
+        </form>
+    </li>
+</ul>
