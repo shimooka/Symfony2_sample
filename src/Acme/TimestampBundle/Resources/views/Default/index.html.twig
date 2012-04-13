@@ -1,0 +1,13 @@
+<html>
+<body>
+{% if message != null %}
+<li>{{ message }}</li>
+{% endif %}
+<form action="" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit">Submit</button>
+    </p>
+</form>
+</body>
+</html>
