@@ -1,0 +1,42 @@
+<form id="fileupload" action="{{ path('jqueryFileUpload_upload') }}" method="post" {{ form_enctype(form) }}>
+  <fieldset>
+    {{ form_widget(form) }}
+{#
+    <p>
+      <button type="submit">Upload</button>
+    </p>
+#}
+  </fieldset>
+</form>
+{#
+<div id="dropZone" style="background-image: '{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}'">
+#}
+<div id="dropZone">
+    <img src="{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}" style="width:100px; height:100px; background-color:#aaa;" />
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="{{ asset('bundles/acmejqueryfileupload/js/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ asset('bundles/acmejqueryfileupload/js/jquery.iframe-transport.js') }}"></script>
+<script src="{{ asset('bundles/acmejqueryfileupload/js/jquery.fileupload.js') }}"></script>
+<script type="text/javascript">
+$(function(){
+    $('#fileupload').fileupload({
+        dropZone: $("#dropZone"),
+        /**
+         * dataをjson形式で返されるものと期待し、オブジェクトとして受け取る
+         * UIバージョンの場合はデフォルトで'json'となっている
+         */
+        dataType: 'json',
+        /**
+         * パラメータ名にFormType#getNameが入ることに注意
+         */
+        paramName: 'doyouphp_jp_uploadtype[itemPicture]',
+        done: function (e, data) {
+            $.each(data.result, function (index, result) {
+                $('#dropZone>img').attr('src', result.url);
+            });
+        }
+    });
+});
+</script>

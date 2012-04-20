@@ -1,0 +1,5 @@
+{% if error is defined %}
+[{"error":"{{ error }}"}]
+{% else %}
+[{"name":"{{ fileInfo.getFilename }}","size":{{ fileInfo.getSize }},"url":"{{ path('jqueryFileUpload_download', {'filename':basename, '_format':fileInfo.getExtension}) }}"}]
+{% endif %}
