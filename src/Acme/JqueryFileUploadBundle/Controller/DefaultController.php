@@ -13,29 +13,45 @@ use Acme\JqueryFileUploadBundle\Form\UploadType;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="jqueryFileUpload_index")
+     * @Route("/{itemCode}", name="jqueryFileUpload_index")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction($itemCode)
     {
-        $form = $this->createForm(new UploadType());
+        $em = $this->get('doctrine')->getEntityManager();
+        $entity = $em->getRepository('AcmeJqueryFileUploadBundle:Item')->find($itemCode);
+        $basename = null;
+        $extension = null;
+        if ($entity === null) {
+            $entity = new Item();
+            $entity->setItemCode($itemCode);
+        } else {
+            $itemPicture = new \SplFileInfo($entity->getItemPicture());
+            $extension = $itemPicture->getExtension();
+            $basename = $itemPicture->getBasename('.' . $itemPicture->getExtension());
+        }
+
+        $form = $this->createForm(new UploadType(), $entity);
         return array(
             'form' => $form->createView(),
+            'entity' => $entity,
+            'basename' => $basename,
+            'extension' => $extension,
         );
     }
 
     /**
-     * @Route("/upload", name="jqueryFileUpload_upload", defaults={"_format"="json"})
+     * @Route("/{itemCode}/upload", name="jqueryFileUpload_upload", defaults={"_format"="json"})
      * @Template()
      */
-    public function uploadAction()
+    public function uploadAction($itemCode)
     {
         $form = new UploadType();
         $em = $this->get('doctrine')->getEntityManager();
-        $parameters = $this->getRequest()->request->get($form->getName(), array());
-        $entity = $em->getRepository('AcmeJqueryFileUploadBundle:Item')->find(isset($parameters['itemCode']) ? $parameters['itemCode'] : '');
+        $entity = $em->getRepository('AcmeJqueryFileUploadBundle:Item')->find($itemCode);
         if ($entity === null) {
             $entity = new Item();
+            $entity->setItemCode($itemCode);
         }
 
         $form = $this->createForm($form, $entity);
@@ -46,22 +62,22 @@ die('入力内容が正しくありません');
         }
 
         try {
+            $uploadPath = __DIR__ . '/../Resources/uploads' . DIRECTORY_SEPARATOR . substr($itemCode, 0, 2);
             $uploadedFile = $form['itemPicture']->getData();
-            $entity->setItemPicture($uploadedFile->getClientOriginalName());
-            $uploadedFile->move(
-                __DIR__ . '/../Resources/uploads',
-                $uploadedFile->getClientOriginalName()
-            );
 
-            $newFileInfo = new \SplFileInfo(__DIR__ . '/../Resources/uploads' . DIRECTORY_SEPARATOR . $uploadedFile->getClientOriginalName());
+            $clientOriginalFile = new \SplFileInfo($uploadedFile->getClientOriginalName());
+            $newFileName = sprintf('%s.%s', $itemCode, strtolower($clientOriginalFile->getExtension()));
+            $uploadedFile->move($uploadPath, $newFileName);
+            $newFileInfo = new \SplFileInfo($uploadPath . DIRECTORY_SEPARATOR . $newFileName);
 
             $em = $this->get('doctrine')->getEntityManager();
+            $entity->setItemPicture($newFileName);
             $em->persist($entity);
             $em->flush();
 
             return array(
                 'fileInfo' => $newFileInfo,
-                'basename' => $newFileInfo->getBasename(".{$newFileInfo->getExtension()}"),
+                'basename' => $newFileInfo->getBasename('.' . $newFileInfo->getExtension()),
             );
         } catch (\Exception $e) {
 die('$e->getMessage()');
@@ -76,19 +92,23 @@ die('$e->getMessage()');
     public function downloadAction($filename, $_format)
     {
         $filename = basename($filename . ".{$_format}");
+        $full_filename = __DIR__ . '/../Resources/uploads' . DIRECTORY_SEPARATOR . substr($filename, 0, 2) . DIRECTORY_SEPARATOR . $filename;
 
-        $fileObject = new \SplFileObject(
-            __DIR__ . '/../Resources/uploads' . DIRECTORY_SEPARATOR . $filename
-        );
-        if ($fileObject->isReadable() && $fileObject->isFile()) {
+        $fileInfo = new \SplFileInfo($full_filename);
+        if ($fileInfo->isReadable() && $fileInfo->isFile()) {
             $response = new Response();
-            $mimeType = ($fileObject->getExtension() === 'jpg' ? 'jpeg' : $fileObject->getExtension());
+            $mimeType = ($fileInfo->getExtension() === 'jpg' ? 'jpeg' : $fileInfo->getExtension());
             switch ($mimeType) {
             case 'jpeg':
             case 'png':
             case 'gif':
                 $response->headers->set('Content-Type', "image/{$mimeType}");
-                $response->setContent($fileObject->fpassthru());
+                $contents = file_get_contents($full_filename);
+                $response->setContent($contents);
+                $response->headers->set('Content-Length', strlen($contents));
+                $response->setETag(md5($response->getContent()));
+                $response->setLastModified(new \DateTime('@' . $fileInfo->getMTime()));
+                $response->isNotModified($this->getRequest());
             }
         }
 

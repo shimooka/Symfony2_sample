@@ -1,4 +1,4 @@
-<form id="fileupload" action="{{ path('jqueryFileUpload_upload') }}" method="post" {{ form_enctype(form) }}>
+<form id="fileupload" action="{{ path('jqueryFileUpload_upload', {'itemCode':entity.itemCode}) }}" method="post" {{ form_enctype(form) }}>
   <fieldset>
     {{ form_widget(form) }}
 {#
@@ -12,7 +12,7 @@
 <div id="dropZone" style="background-image: '{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}'">
 #}
 <div id="dropZone">
-    <img src="{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}" style="width:100px; height:100px; background-color:#aaa;" />
+    <img src="{% if (entity.itemPicture) %}{{ path('jqueryFileUpload_download', {'filename':basename, '_format':extension}) }}{% else %}{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}{% endif %}" style="width:100px; height:100px; background-color:#aaa;" />
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -34,7 +34,8 @@ $(function(){
         paramName: 'doyouphp_jp_uploadtype[itemPicture]',
         done: function (e, data) {
             $.each(data.result, function (index, result) {
-                $('#dropZone>img').attr('src', result.url);
+                var now = new Date();
+                $('#dropZone>img').attr('src', result.url + '?' + new Date().getTime());
             });
         }
     });
