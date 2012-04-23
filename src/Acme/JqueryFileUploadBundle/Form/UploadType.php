@@ -17,7 +17,13 @@ class UploadType extends AbstractType
 //                    'required' => true,
 //                    'pattern' => '^[0-9a-zA-Z][-_0-9a-zA-Z]{0,19}$',
 //                ))
-            ->add('itemPicture', 'file',
+            ->add('itemPicture01', 'file',
+                array(
+                    'label' => '商品画像',
+                    'required' => false,
+                    'attr' => array('style' => 'display:none;'),
+                ))
+            ->add('itemPicture02', 'file',
                 array(
                     'label' => '商品画像',
                     'required' => false,

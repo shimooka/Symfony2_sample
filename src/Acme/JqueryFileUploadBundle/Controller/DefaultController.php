@@ -4,6 +4,7 @@ namespace Acme\JqueryFileUploadBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -25,24 +26,19 @@ class DefaultController extends Controller
         if ($entity === null) {
             $entity = new Item();
             $entity->setItemCode($itemCode);
-        } else {
-            $itemPicture = new \SplFileInfo($entity->getItemPicture());
-            $extension = $itemPicture->getExtension();
-            $basename = $itemPicture->getBasename('.' . $itemPicture->getExtension());
         }
 
         $form = $this->createForm(new UploadType(), $entity);
         return array(
             'form' => $form->createView(),
             'entity' => $entity,
-            'basename' => $basename,
-            'extension' => $extension,
         );
     }
 
     /**
      * @Route("/{itemCode}/upload", name="jqueryFileUpload_upload", defaults={"_format"="json"})
      * @Template()
+     * @Method("post")
      */
     public function uploadAction($itemCode)
     {
@@ -54,24 +50,37 @@ class DefaultController extends Controller
             $entity->setItemCode($itemCode);
         }
 
-        $form = $this->createForm($form, $entity);
+        $form = $this->createForm($form, clone $entity);
         $form->bindRequest($this->getRequest());
 
         if (!$form->isValid()) {
 die('入力内容が正しくありません');
         }
 
+        $target_name = null;
+        foreach ($form->getIterator() as $name => $formObj) {
+            if (preg_match('/^itemPicture(0[1-9]|10)$/', $name, $matches) && $formObj->getData() !== null) {
+                $target_name = $name;
+                break;
+            }
+        }
+        if ($target_name === null) {
+die('入力内容が正しくありません');
+        }
+        $target_index = $matches[1];
+
         try {
             $uploadPath = __DIR__ . '/../Resources/uploads' . DIRECTORY_SEPARATOR . substr($itemCode, 0, 2);
-            $uploadedFile = $form['itemPicture']->getData();
+            $uploadedFile = $form[$target_name]->getData();
 
             $clientOriginalFile = new \SplFileInfo($uploadedFile->getClientOriginalName());
-            $newFileName = sprintf('%s.%s', $itemCode, strtolower($clientOriginalFile->getExtension()));
+            $newFileName = sprintf('%s_%s.%s', $itemCode, $target_index, strtolower($clientOriginalFile->getExtension()));
             $uploadedFile->move($uploadPath, $newFileName);
             $newFileInfo = new \SplFileInfo($uploadPath . DIRECTORY_SEPARATOR . $newFileName);
 
             $em = $this->get('doctrine')->getEntityManager();
-            $entity->setItemPicture($newFileName);
+            $methodName = 'set' . ucfirst($target_name);
+            $entity->$methodName($newFileName);
             $em->persist($entity);
             $em->flush();
 
@@ -80,7 +89,7 @@ die('入力内容が正しくありません');
                 'basename' => $newFileInfo->getBasename('.' . $newFileInfo->getExtension()),
             );
         } catch (\Exception $e) {
-die('$e->getMessage()');
+die($e->getMessage());
         }
     }
 

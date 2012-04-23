@@ -27,12 +27,20 @@ class ItemBase
     protected $itemCode;
 
     /**
-     * @var string $itemPicture 商品画像
+     * @var string $itemPicture01 商品画像
      *
-     * @ORM\Column(name="item_picture", type="string", length=128, nullable=true)
+     * @ORM\Column(name="item_picture01", type="string", length=128, nullable=true)
      * @Assert\MaxLength(limit=128, message="商品画像は{{ limit }}文字以内で入力してください")
      */
-    protected $itemPicture;
+    protected $itemPicture01;
+
+    /**
+     * @var string $itemPicture02 商品画像
+     *
+     * @ORM\Column(name="item_picture02", type="string", length=128, nullable=true)
+     * @Assert\MaxLength(limit=128, message="商品画像は{{ limit }}文字以内で入力してください")
+     */
+    protected $itemPicture02;
 
     /**
      * Set itemCode
@@ -55,23 +63,43 @@ class ItemBase
     }
 
     /**
-     * Set itemPicture
+     * Set itemPicture01
      *
-     * @param string $itemPicture
+     * @param string $itemPicture01
      */
-    public function setItemPicture($itemPicture)
+    public function setItemPicture01($itemPicture01)
     {
-        $this->itemPicture = $itemPicture;
+        $this->itemPicture01 = $itemPicture01;
     }
 
     /**
-     * Get itemPicture
+     * Get itemPicture01
      *
-     * @return itemPicture
+     * @return itemPicture01
      */
-    public function getItemPicture()
+    public function getItemPicture01()
     {
-        return $this->itemPicture;
+        return $this->itemPicture01;
+    }
+
+    /**
+     * Set itemPicture02
+     *
+     * @param string $itemPicture02
+     */
+    public function setItemPicture02($itemPicture02)
+    {
+        $this->itemPicture02 = $itemPicture02;
+    }
+
+    /**
+     * Get itemPicture02
+     *
+     * @return itemPicture02
+     */
+    public function getItemPicture02()
+    {
+        return $this->itemPicture02;
     }
 
 }

@@ -1,18 +1,23 @@
 <form id="fileupload" action="{{ path('jqueryFileUpload_upload', {'itemCode':entity.itemCode}) }}" method="post" {{ form_enctype(form) }}>
+{#
   <fieldset>
+#}
     {{ form_widget(form) }}
 {#
     <p>
       <button type="submit">Upload</button>
     </p>
-#}
   </fieldset>
+#}
 </form>
 {#
 <div id="dropZone" style="background-image: '{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}'">
 #}
-<div id="dropZone">
-    <img src="{% if (entity.itemPicture) %}{{ path('jqueryFileUpload_download', {'filename':basename, '_format':extension}) }}{% else %}{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}{% endif %}" style="width:100px; height:100px; background-color:#aaa;" />
+<div class="dropZone">
+    <img id="itemPicture01" class="itemPicture" src="{% if (entity.itemPicture01) %}{{ path('jqueryFileUpload_download', {'filename':entity.itemPicture01|basename, '_format':entity.itemPicture01|extension}) }}{% else %}{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}{% endif %}" style="width:100px; height:100px; background-color:#aaa;" />
+</div>
+<div class="dropZone">
+    <img id="itemPicture02" class="itemPicture" src="{% if (entity.itemPicture02) %}{{ path('jqueryFileUpload_download', {'filename':entity.itemPicture02|basename, '_format':entity.itemPicture02|extension}) }}{% else %}{{ asset('bundles/acmejqueryfileupload/img/no-image-no-ciu._SL100_.gif.jpg') }}{% endif %}" style="width:100px; height:100px; background-color:#aaa;" />
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -21,23 +26,33 @@
 <script src="{{ asset('bundles/acmejqueryfileupload/js/jquery.fileupload.js') }}"></script>
 <script type="text/javascript">
 $(function(){
-    $('#fileupload').fileupload({
-        dropZone: $("#dropZone"),
-        /**
-         * dataをjson形式で返されるものと期待し、オブジェクトとして受け取る
-         * UIバージョンの場合はデフォルトで'json'となっている
-         */
-        dataType: 'json',
-        /**
-         * パラメータ名にFormType#getNameが入ることに注意
-         */
-        paramName: 'doyouphp_jp_uploadtype[itemPicture]',
-        done: function (e, data) {
-            $.each(data.result, function (index, result) {
-                var now = new Date();
-                $('#dropZone>img').attr('src', result.url + '?' + new Date().getTime());
-            });
-        }
+    /**
+     * class="dropZone"な場所を別々のdropzoneにする
+     */
+    $('.dropZone').each(function(){
+        var $this = $(this);
+        $this.fileupload({
+            dropZone: $this,
+            /**
+             * dataをjson形式で返されるものと期待し、オブジェクトとして受け取る
+             * UIバージョンの場合はデフォルトで'json'となっている
+             */
+            dataType: 'json',
+            /**
+             * パラメータ名にFormType#getNameが入ることに注意
+             */
+            paramName: 'doyouphp_jp_uploadtype[' + $('img',this).attr('id') + ']',
+            /**
+             * type="form"の指定
+             */
+            fileInput: $('#doyouphp_jp_uploadtype_' + $('img',this).attr('id')),
+            done: function (e, data) {
+                $.each(data.result, function (index, result) {
+                    var now = new Date();
+                    $('img', $this).attr('src', result.url + '?' + new Date().getTime());
+                });
+            }
+        });
     });
 });
 </script>

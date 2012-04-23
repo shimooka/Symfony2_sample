@@ -4,6 +4,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+  <services>
+    <service id="twig.extension.acme.jqueryfileuploadbundle.file" class="Acme\JqueryFileUploadBundle\Twig\Extension\FileExtension">
+      <tag name="twig.extension" />
+    </service>
+  </services>
+
     <!--
     <parameters>
         <parameter key="acme_jquery_file_upload.example.class">Acme\JqueryFileUploadBundle\Example</parameter>
