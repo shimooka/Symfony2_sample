@@ -16,6 +16,7 @@ class TimestampsType extends AbstractType
                     'required' => true,
                     'widget' => 'single_text',
                     'format' => 'yyyy/MM/dd',
+                    'invalid_message' => '日付1が正しくありません',
                 ))
             ->add('col2', 'date',
                 array(
@@ -23,6 +24,7 @@ class TimestampsType extends AbstractType
                     'required' => false,
                     'widget' => 'single_text',
                     'format' => 'yyyyMMdd',
+                    'invalid_message' => '日付2が正しくありません',
                 ))
         ;
     }
